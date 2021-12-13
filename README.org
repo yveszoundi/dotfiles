@@ -1,0 +1,4 @@
+#+TITLE: README
+
+Few configuration files, some of them are only used on non-Linux systems (i.e. alacritty).
+
