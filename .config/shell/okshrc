@@ -21,7 +21,7 @@ alias la='ls -al'
 alias df='df -h'
 alias ll='ls -l'
 alias mkdir='mkdir -p'
-
+alias em='emacs -nw'
 export ls la em df ll mkdir
 
 backup() {
