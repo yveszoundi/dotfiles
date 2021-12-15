@@ -7,4 +7,4 @@ hardstatus alwayslastline
 attrcolor b ".I"
 defbce "on"
 hardstatus string '%{= Kd} %{= Kd}%-w%{= Kr}[%{= KW}%n %t%{= Kr}]%{= Kd}%+w %-= %{KG} %H%{KW}'
-term st-256color
+term xterm-256color
