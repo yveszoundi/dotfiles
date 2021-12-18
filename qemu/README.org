@@ -1,0 +1,62 @@
+#+TITLE: QEMU Scripts
+
+The scripts target Mac OS but can be customized easily per platform.
+
+* Customization Per Platform
+
+** General Adaptation
+
+Under Windows for multiple lines within the script (command prompt), you just use the carrot sign (=^=) instead of a backslash (=\=).
+
+** Hardware Acceleration
+
+Hardware acceleration is a must with QEMU, still even without that it's still much better than VirtualBox nowadays...
+
+[[https://www.qemu.org/2017/11/22/haxm-usage-windows/][Intel HAXM]] doesn't feel that great even though I haven't tested it extensively.
+
+|------------------------+----------------------------------|
+| OS                     | Relevant changes                 |
+|------------------------+----------------------------------|
+| Linux                  | =-accel kvm=                     |
+| Windows (Hyper-V)      | =-accel whpx,kernel-irqchip=off= |
+| Mac OS                 | =--accel hvf=                    |
+| FreeBSD and other BSDs | I dunno, it's been a while..     |
+|------------------------+----------------------------------|
+
+* Scripts
+
+** Folder and Script Location Conventions
+
+It is expected that you put all the scripts at the root of your "Virtual Machines" folder. Each virtual machine folder name will also need to match it's ISO installation filename and its disk filename.
+
+[[./folder_conventions.png]]
+
+
+** Purpose
+
+*** Overview
+
+|----------------+------------------------------------------------------------------------------|
+| Script         | Purpose                                                                      |
+|----------------+------------------------------------------------------------------------------|
+| =qemu_cdrom=   | Run a live CD ISO image for one-off runs                                     |
+| =qemu_newdisk= | Create a new QEMU qcow2 disk prior installation with =qemu_install=          |
+| =qemu_install= | Start an installation from an ISO image onto a newly created QEMU qcow2 disk |
+| =qemu_drive=   | Run a local QEMU qcow2 disk after installation via =qemu_install=            |
+| =qemu_rescue=  | Boot a live CD to rescue an existing install via chroot                      |
+|----------------+------------------------------------------------------------------------------|
+
+
+*** Examples
+
+#+begin_src sh
+  ./qemu_cdrom testlinux
+
+  ./qemu_newdisk testlinux 25G
+
+  ./qemu_install testlinux
+
+  ./qemu_drive testlinux
+
+  ./qemu_rescue testlinux
+#+end_src

@@ -1,5 +1,0 @@
-min_scale = 0.3
-scroll_speed = 1.5
-drag_friction = 6.0
-scale_friction = 4.0
-texture_filtering = nearest

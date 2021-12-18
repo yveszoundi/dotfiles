@@ -1,0 +1,16 @@
+#!/bin/sh
+iso_filename=$(basename $1)
+
+qemu-system-x86_64 \
+  -m 8G \
+  -usb \
+  -device qemu-xhci \
+  -net nic -net user \
+  -device usb-kbd \
+  -device usb-tablet \
+  -device intel-hda \
+  -device hda-duplex \
+  -cdrom $1/${iso_filename}.iso \
+  -drive file=$1/${iso_filename}.qcow2,format=qcow2 \
+  -accel hvf
+

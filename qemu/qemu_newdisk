@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if [ -z "$1" ]; then
+    echo "Please provide an image name."
+    echo " Example:"
+    echo " ./qemu_newdisk voidlinux"
+    echo " or with a specific disk size, instead of 25G"
+    echo " ./qemu_newdisk ubuntu 30G"
+else    
+    distro_name=$1
+    disk_size=${2:-"25G"}
+    mkdir -p ${distro_name}
+    qemu-img create -f qcow2 ${distro_name}/${distro_name}.qcow2 ${disk_size}
+    echo "Please place the associate ISO installation image in ${distro_name}/${distro_name}.iso"
+fi

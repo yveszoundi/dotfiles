@@ -1,4 +1,0 @@
-#!/usr/bin/env ksh
-. $HOME/xsessionrc
-
-exec dwm

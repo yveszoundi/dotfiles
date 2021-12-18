@@ -1,0 +1,12 @@
+#!/bin/sh
+iso_filename=$(basename $1)
+
+qemu-system-x86_64 \
+  -m 8G \
+  -soundhw all \
+  -usb \
+  -device usb-tablet \
+  -cdrom $1/${iso_filename}.iso \
+  -net nic -net user \
+  -accel hvf 
+

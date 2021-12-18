@@ -1,0 +1,10 @@
+.tab-background[selected="true"] {
+    background-color: red !important; /* this sets the color of the tab background */
+    background-image: none !important;
+    color:white !important;
+    font-weight:bold !important;
+}
+
+.tab-line[selected="true"] {
+    background-color : red; /* this sets the color of the line above the tab */
+}

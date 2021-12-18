@@ -1,0 +1,33 @@
+#+TITLE: README
+
+* User Preferences
+
+The =user.js= file contains few default settings for Firefox:
+- Visit the URL =about:support= in Firefox.
+- Search for =Profile Folder=.
+- Drop the =user.js= file inside the directory identified in the previous step.
+
+* Tabs colors
+
+It's become very difficult to identify quickly the active tab in Firefox. This is fixed in the =user.js= file so that we can override colors via CSS.
+
+Copy the entire =chrome= directory inside your Firefox profile folder, same folder as for *User Preferences* in the previous section.
+
+* Addons
+
+Couple of useful addons that you can install.
+
+|-------------------------------+-----------------------------------------------------------------------------------------------------------------|
+| Addon                         | Description                                                                                                     |
+|-------------------------------+-----------------------------------------------------------------------------------------------------------------|
+| [[https://addons.mozilla.org/en-US/firefox/addon/localcdn-fork-of-decentraleyes/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search][LocalCDN]]                      | Emulates remote frameworks (e.g. jQuery, Bootstrap, AngularJS) and delivers them as local resource.             |
+| [[https://addons.mozilla.org/en-US/firefox/addon/https-everywhere/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search][HTTPS everywhere]]              | Protect your communications by enabling HTTPS encryption automatically                                          |
+| [[https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search][ublock origin]]                 | Efficient wide-spectrum content blocker. Easy on CPU and memory                                                 |
+| [[https://addons.mozilla.org/en-US/firefox/addon/cookie-autodelete/][Cookie AutoDelete]]             | When a tab closes, any cookies not being used are automatically deleted.                                        |
+| [[https://addons.mozilla.org/en-US/firefox/addon/canvasblocker/][CanvasBlocker]]                 | Alters some JS APIs to prevent fingerprinting.                                                                  |
+| [[https://addons.mozilla.org/en-US/firefox/addon/privacy-possum/][Privacy Possum]]                | Wrenches common commercial tracking methods by reducing and falsifying the data gathered by tracking companies. |
+| [[https://addons.mozilla.org/en-US/firefox/addon/terms-of-service-didnt-read/][Terms of Service; Didn't Read]] | Get informed instantly about websites' terms & privacy policies, with ratings and summaries                     |
+| [[https://addons.mozilla.org/en-US/firefox/addon/user-agent-platform-spoofer/][User Agent Platform Spoofer]]   | Alter the user agent to spoof a different platform, Windows on *nix and vice versa.                             |
+| [[https://addons.mozilla.org/en-US/firefox/addon/webgl-fingerprint-defender/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search][WebGL Fingerprint Defender]]    | Defending against WebGL fingerprinting by reporting a fake value.                                               |
+|-------------------------------+-----------------------------------------------------------------------------------------------------------------|
+

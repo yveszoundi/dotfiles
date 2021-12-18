@@ -1,0 +1,13 @@
+#+TITLE: Graphics
+
+* Image to PDF
+
+It's easy to write such a tool yourself in most programming languages. There's also [[https://pypi.org/project/img2pdf/][img2pdf]].
+
+* Merge PDFs with Ghostscript
+
+The same can be achieved easily with [[https://manpages.ubuntu.com/manpages/bionic/man1/pdfunite.1.html][pdfunite]] and similar tools. Ghostscript is available for almost all operating systems.
+
+#+begin_src sh
+gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -dPDFSETTINGS=/prepress -sOutputFile=merged.pdf "$@"
+#+end_src
