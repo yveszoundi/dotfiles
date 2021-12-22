@@ -4,6 +4,8 @@
 
 It's easy to write such a tool yourself in most programming languages. There's also [[https://pypi.org/project/img2pdf/][img2pdf]].
 
+Accordingly to your installed programs versions, ImageMagick [[https://stackoverflow.com/questions/52998331/imagemagick-security-policy-pdf-blocking-conversion][might just be fine]] (=convert= utility).
+
 * Merge PDFs with Ghostscript
 
 The same can be achieved easily with [[https://manpages.ubuntu.com/manpages/bionic/man1/pdfunite.1.html][pdfunite]] and similar tools. Ghostscript is available for almost all operating systems.

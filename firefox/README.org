@@ -2,7 +2,7 @@
 
 * User Preferences
 
-The =user.js= file contains few default settings for Firefox:
+The =user.js= file contains few default settings for Firefox (based on [[https://github.com/ghacksuserjs/ghacks-user.js][gHacks]]):
 - Visit the URL =about:support= in Firefox.
 - Search for =Profile Folder=.
 - Drop the =user.js= file inside the directory identified in the previous step.
