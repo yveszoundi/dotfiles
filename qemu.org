@@ -1,0 +1,223 @@
+#+TITLE: QEMU Scripts
+
+The scripts target Mac OS but can be customized easily per platform.
+
+* Customization Per Platform
+
+** General Adaptation
+
+Under Windows for multiple lines within the script (command prompt), you just use the carrot sign (=^=) instead of a backslash (=\=).
+
+** Hardware Acceleration
+
+Hardware acceleration is a must with QEMU, still even without that it's still much better than VirtualBox nowadays...
+
+[[https://www.qemu.org/2017/11/22/haxm-usage-windows/][Intel HAXM]] doesn't feel that great even though I haven't tested it extensively.
+
+|-------------------+----------------------------------|
+| OS                | Relevant changes                 |
+|-------------------+----------------------------------|
+| Linux             | =-accel kvm=                     |
+| Windows (Hyper-V) | =-accel whpx,kernel-irqchip=off= |
+| Mac OS            | =--accel hvf=                    |
+|-------------------+----------------------------------|
+
+* Scripts
+
+** Folder and Script Location Conventions
+
+It is expected that you put all the scripts at the root of your "Virtual Machines" folder. Each virtual machine folder name will also need to match it's ISO installation filename and its disk filename.
+
+[[./images/qemu_folder_conventions.png]]
+
+
+* Running a live CDROM
+
+#+begin_src sh
+  #!/bin/sh
+  set -x
+  iso_filename=$(basename $1)
+
+  qemu-system-x86_64 \
+      -name "(${iso_filename})" \
+      -m 5G \
+      -usb \
+      -device usb-tablet \
+      -cdrom $1/${iso_filename}.iso \
+      -net nic \
+      -net user \
+      -accel hvf \
+      -device intel-hda \
+      -device hda-duplex 
+
+#+end_src
+
+* Installing an OS on a VM
+
+** Creating a new disk
+
+#+begin_src sh
+  #!/bin/sh
+
+  if [ -z "$1" ]; then
+      echo "Please provide an image name."
+      echo " Example:"
+      echo " ./qemu_newdisk voidlinux"
+      echo " or with a specific disk size, instead of 45G"
+      echo " ./qemu_newdisk ubuntu 10G"
+  else    
+      distro_name=$1
+      disk_size=${2:-"45G"}
+      mkdir -p images/${distro_name}
+      qemu-img create -f qcow2 ./images/${distro_name}/${distro_name}.qcow2 ${disk_size}
+      echo "Please place the associate ISO installation image in ${distro_name}/${distro_name}.iso"
+  fi
+
+#+end_src
+
+** Starting the installation
+
+#+begin_src sh
+  #!/bin/sh
+  iso_filename=$(basename $1)
+
+  qemu-system-x86_64 \
+    -m 8G \
+    -usb \
+    -device qemu-xhci \
+    -net nic -net user \
+    -device usb-kbd \
+    -device usb-tablet \
+    -device intel-hda \
+    -device hda-duplex \
+    -cdrom $1/${iso_filename}.iso \
+    -drive file=$1/${iso_filename}.qcow2,format=qcow2 \
+    -accel hvf
+
+#+end_src
+
+* Running an installed OS
+
+#+begin_src sh
+    #!/bin/sh
+    set -x
+
+    # macos notes
+    # For windows on the mac start with utm.app (UEFI challenges)
+    # install tpm emulation brew tap, set default resolution, update boot order, adjust boot index, install virtio drivers
+    # brew tap spikespaz/jacob
+    # brew install swtpm
+
+    image_basename=$(basename $1)
+    net_user_options="-net user"
+    os_type="unix"
+    assigned_ram="4G"
+    assigned_ssh_port="10050"
+    file_ssh="$1/${image_basename}.ssh"
+    file_mem="$1/${image_basename}.mem"
+
+    if [ $2 ]
+    then
+        if [ $2 != "nossh" ]
+        then
+           assigned_ssh_port=$2
+        fi
+    else
+        if [ -e "${file_ssh}" ]
+        then
+            assigned_ssh_port=`cat $file_ssh`
+            ssh_options=",hostfwd=tcp::${assigned_ssh_port}-:22"
+            net_user_options="${net_user_options}${ssh_options}"
+        fi
+    fi
+
+    if [ -e "${file_mem}" ]
+    then
+        assigned_ram=`cat $file_mem`
+    fi
+
+    case "$image_basename" in
+      ,*windows*) os_type="windows" ;;
+      ,*)         os_type="unix"    ;;
+    esac
+
+    if [ $os_type = "unix" ]
+    then
+        qemu-system-x86_64 \
+          -name "(${image_basename})" \
+          -m ${assigned_ram} \
+          -usb \
+          -device qemu-xhci \
+          -device usb-kbd \
+          -device usb-tablet \
+          -device intel-hda \
+          -device hda-duplex \
+          -net nic ${net_user_options} \
+          -smp 2 \
+          -drive file=$1/${image_basename}.qcow2,format=qcow2 \
+          -accel hvf \
+          -rtc base=localtime,clock=host
+    else
+        tpm_dir=/tmp/emulated_tpm
+        mkdir -p ${tpm_dir}
+        tpm_socket_file=${tpm_dir}/swtpm-sock
+        swtpm socket --tpmstate dir=${tpm_dir} --ctrl type=unixio,path=${tpm_socket_file} --log level=20 --tpm2&
+
+        qemu-system-x86_64 \
+          -name "(${image_basename})" \
+          -m ${assigned_ram} \
+          -usb \
+          -display default,gl=off \
+          -nodefaults \
+          -vga none \
+          -device virtio-vga \
+          -device virtio-rng-pci \
+          -smp cpus=4,sockets=1,cores=4,threads=1 \
+          -machine q35,vmport=off \
+          -global PIIX4_PM.disable_s3=1 \
+          -global ICH9-LPC.disable_s3=1 \
+          -accel hvf \
+          -accel tcg,tb-size=2560 \
+          -device e1000,mac=FB:13:45:H2:9E:99,netdev=net0 \
+          -netdev user,id=net0 \
+          -boot menu=on \
+          -device intel-hda \
+          -device hda-duplex \
+          -device qemu-xhci \
+          -device usb-kbd \
+          -device usb-tablet \
+          -chardev socket,id=chrtpm,path=${tpm_socket_file} \
+          -tpmdev emulator,id=tpm0,chardev=chrtpm \
+          -device tpm-tis,tpmdev=tpm0 \
+          -device ide-hd,bus=ide.1,drive=drive0,bootindex=0 \
+          -drive if=pflash,format=raw,unit=0,file=./$1/edk2-x86_64-code.fd,readonly=on \
+          -drive if=pflash,format=raw,unit=1,file=./$1/efi_vars.fd \
+          -drive if=none,media=disk,id=drive0,file=$1/${image_basename}.qcow2,cache=writethrough \
+          -uuid A6F9122T-ZFFF-199R-Q5I7-U87POI1GF27P \
+          -rtc base=localtime,clock=host
+    fi
+
+
+#+end_src
+
+* Rescue an installation
+
+#+begin_src sh
+  #!/bin/sh
+  iso_filename=$(basename $1)
+
+  qemu-system-x86_64 \
+    -m 10G \
+    -usb \
+    -device qemu-xhci \
+    -device usb-kbd \
+    -device usb-tablet \
+    -device intel-hda \
+    -device hda-duplex \
+    -net nic -net user \
+    -boot d \
+    -cdrom $1/${iso_filename}.iso \
+    -drive file=$1/${iso_filename}.qcow2,format=qcow2 \
+    -accel hvf
+
+#+end_src

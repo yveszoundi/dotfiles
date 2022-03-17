@@ -1,0 +1,413 @@
+#+TITLE: README
+
+* User Preferences
+
+The =user.js= file contains few default settings for Firefox (based on [[https://github.com/ghacksuserjs/ghacks-user.js][gHacks]]):
+- Visit the URL =about:support= in Firefox.
+- Search for =Profile Folder=.
+- Drop the =user.js= file inside the directory identified in the previous step.
+
+* Tabs colors
+
+It's become very difficult to identify quickly the active tab in Firefox. This is fixed in the =user.js= file so that we can override colors via CSS.
+
+Copy the entire =chrome= directory inside your Firefox profile folder, same folder as for *User Preferences* in the previous section.
+
+* Addons
+
+Couple of useful addons that you can install.
+
+|-------------------------------+-----------------------------------------------------------------------------------------------------------------|
+| Addon                         | Description                                                                                                     |
+|-------------------------------+-----------------------------------------------------------------------------------------------------------------|
+| [[https://addons.mozilla.org/en-US/firefox/addon/localcdn-fork-of-decentraleyes/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search][LocalCDN]]                      | Emulates remote frameworks (e.g. jQuery, Bootstrap, AngularJS) and delivers them as local resource.             |
+| [[https://addons.mozilla.org/en-US/firefox/addon/https-everywhere/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search][HTTPS everywhere]]              | Protect your communications by enabling HTTPS encryption automatically                                          |
+| [[https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search][ublock origin]]                 | Efficient wide-spectrum content blocker. Easy on CPU and memory                                                 |
+| [[https://addons.mozilla.org/en-US/firefox/addon/cookie-autodelete/][Cookie AutoDelete]]             | When a tab closes, any cookies not being used are automatically deleted.                                        |
+| [[https://addons.mozilla.org/en-US/firefox/addon/canvasblocker/][CanvasBlocker]]                 | Alters some JS APIs to prevent fingerprinting.                                                                  |
+| [[https://addons.mozilla.org/en-US/firefox/addon/privacy-possum/][Privacy Possum]]                | Wrenches common commercial tracking methods by reducing and falsifying the data gathered by tracking companies. |
+| [[https://addons.mozilla.org/en-US/firefox/addon/terms-of-service-didnt-read/][Terms of Service; Didn't Read]] | Get informed instantly about websites' terms & privacy policies, with ratings and summaries                     |
+| [[https://addons.mozilla.org/en-US/firefox/addon/user-agent-platform-spoofer/][User Agent Platform Spoofer]]   | Alter the user agent to spoof a different platform, Windows on *nix and vice versa.                             |
+| [[https://addons.mozilla.org/en-US/firefox/addon/webgl-fingerprint-defender/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search][WebGL Fingerprint Defender]]    | Defending against WebGL fingerprinting by reporting a fake value.                                               |
+|-------------------------------+-----------------------------------------------------------------------------------------------------------------|
+
+* User.js
+
+#+begin_src js
+  /******
+  ,* name: ghacks user.js
+  ,* date: 11 March 2020
+  ,* version 74-alpha
+  ,* authors: v52+ github | v51- www.ghacks.net
+  ,* url: https://github.com/ghacksuserjs/ghacks-user.js
+  ,* license: MIT: https://github.com/ghacksuserjs/ghacks-user.js/blob/master/LICENSE.txt
+
+  ,* releases: These are end-of-stable-life-cycle legacy archives.
+              ,*Always* use the master branch user.js for a current up-to-date version.
+         url: https://github.com/ghacksuserjs/ghacks-user.js/releases
+
+  ,* README:
+
+    0. Consider using Tor Browser if it meets your needs or fits your threat model better
+       ,* https://www.torproject.org/about/torusers.html.en
+    1. READ the full README
+       ,* https://github.com/ghacksuserjs/ghacks-user.js/blob/master/README.md
+    2. READ this
+       ,* https://github.com/ghacksuserjs/ghacks-user.js/wiki/1.3-Implementation
+    3. If you skipped steps 1 and 2 above (shame on you), then here is the absolute minimum
+       ,* Real time binary checks with Google services are disabled (0412)
+       ,* You will still get prompts to update Firefox, but auto-installing them is disabled (0302a)
+       ,* Some user data is erased on close (section 2800). Change this to suit your needs
+       ,* EACH RELEASE check:
+           - 4600s: reset prefs made redundant due to privacy.resistFingerprinting (RPF)
+                    or enable them as an alternative to RFP (or some of them for ESR users)
+           - 9999s: reset deprecated prefs in about:config or enable the relevant section for ESR
+       ,* Site breakage WILL happen
+           - There are often trade-offs and conflicts between Security vs Privacy vs Anti-Fingerprinting
+             and these need to be balanced against Functionality & Convenience & Breakage
+       ,* You will need to make changes, and to troubleshoot at times (choose wisely, there is always a trade-off).
+         While not 100% definitive, search for "[SETUP". If required, add each pref to your overrides section at
+         default values (or comment them out and reset them in about:config). Here are the main ones:
+         [SETUP-SECURITY] it's one item, read it
+              [SETUP-WEB] can cause some websites to break
+           [SETUP-CHROME] changes how Firefox itself behaves (i.e. NOT directly website related)
+             [SETUP-PERF] may impact performance
+           [SETUP-HARDEN] maybe you should consider using the Tor Browser
+       ,* [WARNING] tags are extra special and used sparingly, so heed them
+    4. BACKUP your profile folder before implementing (and/or test in a new/cloned profile)
+    5. KEEP UP TO DATE: https://github.com/ghacksuserjs/ghacks-user.js/wiki#small_orange_diamond-maintenance
+
+  ,* INDEX:
+
+    0100: STARTUP
+    0200: GEOLOCATION / LANGUAGE / LOCALE
+    0300: QUIET FOX
+    0400: BLOCKLISTS / SAFE BROWSING
+    0500: SYSTEM ADD-ONS / EXPERIMENTS
+    0600: BLOCK IMPLICIT OUTBOUND
+    0700: HTTP* / TCP/IP / DNS / PROXY / SOCKS etc
+    0800: LOCATION BAR / SEARCH BAR / SUGGESTIONS / HISTORY / FORMS
+    0900: PASSWORDS
+    1000: CACHE / SESSION (RE)STORE / FAVICONS
+    1200: HTTPS (SSL/TLS / OCSP / CERTS / HPKP / CIPHERS)
+    1400: FONTS
+    1600: HEADERS / REFERERS
+    1700: CONTAINERS
+    1800: PLUGINS
+    2000: MEDIA / CAMERA / MIC
+    2200: WINDOW MEDDLING & LEAKS / POPUPS
+    2300: WEB WORKERS
+    2400: DOM (DOCUMENT OBJECT MODEL) & JAVASCRIPT
+    2500: HARDWARE FINGERPRINTING
+    2600: MISCELLANEOUS
+    2700: PERSISTENT STORAGE
+    2800: SHUTDOWN
+    4000: FPI (FIRST PARTY ISOLATION)
+    4500: RFP (RESIST FINGERPRINTING)
+    4600: RFP ALTERNATIVES
+    4700: RFP ALTERNATIVES (NAVIGATOR / USER AGENT (UA) SPOOFING)
+    5000: PERSONAL
+    9999: DEPRECATED / REMOVED / LEGACY / RENAMED
+
+  ,******/
+  user_pref("_user.js.parrot", "0300 syntax error: the parrot's not pinin' for the fjords!");
+  user_pref("accessibility.force_disabled", 1);
+  user_pref("app.normandy.api_url", "");
+  user_pref("app.normandy.enabled", false);
+  user_pref("app.normandy.first_run", false);
+  user_pref("app.normandy.user_id", "anonymous");
+  user_pref("app.shield.optoutstudies.enabled", false);
+  user_pref("app.update.auto", false);
+  user_pref("beacon.enabled", false);
+  user_pref("breakpad.reportURL", "");
+  user_pref("browser.aboutConfig.showWarning", false);
+  user_pref("browser.cache.disk.enable", false);
+  user_pref("browser.cache.offline.enable", false);
+  user_pref("browser.contentblocking.category", "custom");
+  user_pref("browser.crashReports.unsubmittedCheck.autoSubmit2", false);
+  user_pref("browser.crashReports.unsubmittedCheck.enabled", false);
+  user_pref("browser.discovery.enabled", false);
+  user_pref("browser.display.use_document_fonts", 0);
+  user_pref("browser.display.use_system_colors", false);
+  user_pref("browser.download.alwaysOpenPanel", false);
+  user_pref("browser.download.folderList", 2);
+  user_pref("browser.download.manager.addToRecentDocs", false);
+  user_pref("browser.download.manager.retention", 0);
+  user_pref("browser.download.panel.shown", true);
+  user_pref("browser.download.useDownloadDir", false);
+  user_pref("browser.download.viewableInternally.typeWasRegistered.avif", true);
+  user_pref("browser.download.viewableInternally.typeWasRegistered.svg", true);
+  user_pref("browser.download.viewableInternally.typeWasRegistered.webp", true);
+  user_pref("browser.download.viewableInternally.typeWasRegistered.xml", true);
+  user_pref("browser.fixup.alternate.enabled", false);
+  user_pref("browser.formfill.enable", false);
+  user_pref("browser.formfill.expire_days", 0);
+  user_pref("browser.helperApps.deleteTempFileOnExit", true);
+  user_pref("browser.link.open_newwindow", 3);
+  user_pref("browser.link.open_newwindow.restriction", 0);
+  user_pref("browser.newtab.preload", false);
+  user_pref("browser.newtab.url", "about:blank");
+  user_pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr", false);
+  user_pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons", false);
+  user_pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", false);
+  user_pref("browser.newtabpage.activity-stream.default.sites", "");
+  user_pref("browser.newtabpage.activity-stream.enabled", false);
+  user_pref("browser.newtabpage.activity-stream.feeds.discoverystreamfeed", false);
+  user_pref("browser.newtabpage.activity-stream.feeds.section.topstories", false);
+  user_pref("browser.newtabpage.activity-stream.feeds.telemetry", false);
+  user_pref("browser.newtabpage.activity-stream.feeds.topsites", false);
+  user_pref("browser.newtabpage.activity-stream.impressionId", "{98cd0776-61x9-d648-929c-5f568889ed5a}");
+  user_pref("browser.newtabpage.activity-stream.improvesearch.topSiteSearchShortcuts", false);
+  user_pref("browser.newtabpage.activity-stream.improvesearch.topSiteSearchShortcuts.havePinned", "google");
+  user_pref("browser.newtabpage.activity-stream.section.highlights.includePocket", false);
+  user_pref("browser.newtabpage.activity-stream.showSponsored", false);
+  user_pref("browser.newtabpage.activity-stream.showSponsoredTopSites", false);
+  user_pref("browser.newtabpage.activity-stream.showTopSites", false);
+  user_pref("browser.newtabpage.activity-stream.telemetry", false);
+  user_pref("browser.newtabpage.activity-stream.telemetry.structuredIngestion", false);
+  user_pref("browser.newtabpage.activity-stream.telemetry.structuredIngestion.endpoint", "https://0.0.0.0");
+  user_pref("browser.newtabpage.directory.ping", "");
+  user_pref("browser.newtabpage.directory.source", "data:text/plain,{}");
+  user_pref("browser.newtabpage.enabled", false);
+  user_pref("browser.newtabpage.enhanced", false);
+  user_pref("browser.pagethumbnails.capturing_disabled", true); 
+  user_pref("browser.ping-centre.telemetry", false);
+  user_pref("browser.safebrowsing.downloads.remote.enabled", false);
+  user_pref("browser.safebrowsing.downloads.remote.url", "");
+  user_pref("browser.search.geoSpecificDefaults", false);
+  user_pref("browser.search.geoSpecificDefaults.url", "");
+  user_pref("browser.search.geoip.url", "");
+  user_pref("browser.search.region", "US"); 
+  user_pref("browser.search.suggest.enabled", false);
+  user_pref("browser.search.update", false);
+  user_pref("browser.send_pings", false); 
+  user_pref("browser.send_pings.require_same_host", true);
+  user_pref("browser.sessionstore.interval", 30000);
+  user_pref("browser.sessionstore.privacy_level", 2);
+  user_pref("browser.shell.checkDefaultBrowser", false);
+  user_pref("browser.shell.shortcutFavicons", false);
+  user_pref("browser.ssl_override_behavior", 1);
+  user_pref("browser.startup.blankWindow", false);
+  user_pref("browser.startup.homepage", "about:blank");
+  user_pref("browser.startup.page", 0);
+  user_pref("browser.tabs.crashReporting.sendReport", false);
+  user_pref("browser.tabs.remote.allowLinkedWebInFileUriProcess", false);
+  user_pref("browser.taskbar.lists.enabled", false);
+  user_pref("browser.taskbar.lists.frequent.enabled", false);
+  user_pref("browser.taskbar.lists.recent.enabled", false);
+  user_pref("browser.taskbar.lists.tasks.enabled", false);
+  user_pref("browser.taskbar.previews.enable", false);
+  user_pref("browser.uitour.enabled", false);
+  user_pref("browser.uitour.url", "");
+  user_pref("browser.urlbar.speculativeConnect.enabled", false);
+  user_pref("browser.urlbar.suggest.searches", false);
+  user_pref("browser.urlbar.trimURLs", false);
+  user_pref("browser.urlbar.usepreloadedtopurls.enabled", false);
+  user_pref("browser.xul.error_pages.expert_bad_cert", true);
+  user_pref("captivedetect.canonicalURL", "");
+  user_pref("clipboard.plainTextOnly", true);
+  user_pref("datareporting.healthreport.uploadEnabled", false);
+  user_pref("datareporting.policy.dataSubmissionEnabled", false);
+  user_pref("devtools.chrome.enabled", false);
+  user_pref("devtools.debugger.remote-enabled", false);
+  user_pref("dom.allow_cut_copy", false);
+  user_pref("dom.disable_beforeunload", true);
+  user_pref("dom.disable_open_during_load", true);
+  user_pref("dom.disable_window_move_resize", true);
+  user_pref("dom.disable_window_open_feature.close", true);
+  user_pref("dom.disable_window_open_feature.location", true); 
+  user_pref("dom.disable_window_open_feature.menubar", true);
+  user_pref("dom.disable_window_open_feature.minimizable", true);
+  user_pref("dom.disable_window_open_feature.personalbar", true); 
+  user_pref("dom.disable_window_open_feature.resizable", true); 
+  user_pref("dom.disable_window_open_feature.status", true); 
+  user_pref("dom.disable_window_open_feature.titlebar", true);
+  user_pref("dom.disable_window_open_feature.toolbar", true);
+  user_pref("dom.event.clipboardevents.enabled", false);
+  user_pref("dom.ipc.plugins.flash.subprocess.crashreporter.enabled", false);
+  user_pref("dom.ipc.plugins.reportCrashURL", false);
+  user_pref("dom.ipc.reportProcessHangs", false);
+  user_pref("dom.popup_allowed_events", "click dblclick");
+  user_pref("dom.push.enabled", false);
+  user_pref("dom.serviceWorkers.enabled", false);
+  user_pref("dom.targetBlankNoOpener.enabled", true);
+  user_pref("dom.vibrator.enabled", false);
+  user_pref("dom.webaudio.enabled", false);
+  user_pref("experiments.activeExperiment", false);
+  user_pref("experiments.enabled", false);
+  user_pref("extensions.autoDisableScopes", 15);
+  user_pref("extensions.blocklist.enabled", true);
+  user_pref("extensions.blocklist.url", "https://blocklists.settings.services.mozilla.com/v1/blocklist/3/%APP_ID%/%APP_VERSION%/");
+  user_pref("extensions.enabledScopes", 5);
+  user_pref("extensions.formautofill.addresses.enabled", false); 
+  user_pref("extensions.formautofill.available", "off"); 
+  user_pref("extensions.formautofill.creditCards.enabled", false); 
+  user_pref("extensions.formautofill.heuristics.enabled", false); 
+  user_pref("extensions.getAddons.showPane", false);
+  user_pref("extensions.htmlaboutaddons.recommendations.enabled", false);
+  user_pref("extensions.screenshots.upload-disabled", true);
+  user_pref("extensions.systemAddon.update.enabled", false); 
+  user_pref("extensions.systemAddon.update.url", ""); 
+  user_pref("extensions.webcompat-reporter.enabled", false);
+  user_pref("general.warnOnAboutConfig", false);
+  user_pref("geo.enabled", false);
+  user_pref("geo.provider.ms-windows-location", false); 
+  user_pref("geo.provider.network.url", "https://location.services.mozilla.com/v1/geolocate?key=%MOZILLA_API_KEY%");
+  user_pref("geo.provider.use_corelocation", false); 
+  user_pref("geo.provider.use_gpsd", false); 
+  user_pref("gfx.font_rendering.graphite.enabled", false);
+  user_pref("gfx.font_rendering.opentype_svg.enabled", false);
+  user_pref("intl.accept_languages", "en-US, en");
+  user_pref("intl.charset.fallback.override", "windows-1252");
+  user_pref("javascript.options.asmjs", false);
+  user_pref("javascript.options.wasm", false);
+  user_pref("javascript.use_us_english_locale", true); 
+  user_pref("keyword.enabled", false);
+  user_pref("layout.css.visited_links_enabled", false);
+  user_pref("media.autoplay.allow-extension-background-pages", false);
+  user_pref("media.autoplay.allow-muted", false);
+  user_pref("media.autoplay.block-event.enabled", true);
+  user_pref("media.autoplay.blocking_policy", 2);
+  user_pref("media.autoplay.default", 5);
+  user_pref("media.autoplay.enabled", false);
+  user_pref("media.autoplay.enabled.user-gestures-needed", false);
+  user_pref("media.autoplay.enabled.user-gestures-needed", false);
+  user_pref("media.eme.enabled", false);
+  user_pref("media.getusermedia.audiocapture.enabled", false);
+  user_pref("media.getusermedia.browser.enabled", false);
+  user_pref("media.getusermedia.screensharing.enabled", false);
+  user_pref("media.gmp-widevinecdm.enabled", false);
+  user_pref("media.gmp-widevinecdm.visible", false);
+  user_pref("media.navigator.enabled", false);
+  user_pref("media.peerconnection.enabled", false);
+  user_pref("media.peerconnection.ice.default_address_only", true);
+  user_pref("media.peerconnection.ice.no_host", true); 
+  user_pref("media.peerconnection.ice.proxy_only_if_behind_proxy", true); 
+  user_pref("media.peerconnection.identity.timeout", 1);
+  user_pref("media.peerconnection.turn.disable", true);
+  user_pref("media.peerconnection.use_document_iceservers", false);
+  user_pref("media.peerconnection.video.enabled", false);
+  user_pref("middlemouse.contentLoadURL", false);
+  user_pref("network.IDN_show_punycode", true);
+  user_pref("network.auth.subresource-http-auth-allow", 1);
+  user_pref("network.captive-portal-service.enabled", false);
+  user_pref("network.connectivity-service.enabled", false);
+  user_pref("network.cookie.cookieBehavior", 1);
+  user_pref("network.cookie.thirdparty.nonsecureSessionOnly", true);
+  user_pref("network.cookie.thirdparty.sessionOnly", true);
+  user_pref("network.dns.disableIPv6", true);
+  user_pref("network.dns.disablePrefetch", true);
+  user_pref("network.dns.disablePrefetchFromHTTPS", true); 
+  user_pref("network.file.disable_unc_paths", true); 
+  user_pref("network.gio.supported-protocols", ""); 
+  user_pref("network.http.altsvc.enabled", false);
+  user_pref("network.http.altsvc.oe", false);
+  user_pref("network.http.redirection-limit", 10);
+  user_pref("network.http.referer.XOriginPolicy", 1);
+  user_pref("network.http.referer.XOriginTrimmingPolicy", 0);
+  user_pref("network.http.referer.hideOnionSource", true);
+  user_pref("network.http.speculative-parallel-limit", 0);
+  user_pref("network.predictor.enable-prefetch", false); 
+  user_pref("network.predictor.enabled", false);
+  user_pref("network.prefetch-next", false);
+  user_pref("network.protocol-handler.external.ms-windows-store", false);
+  user_pref("network.proxy.socks_remote_dns", true);
+  user_pref("network.trr.blocklist_cleanup_done", true);
+  user_pref("network.trr.resolvers", "[{ \"name\" : \"SecureDNS\", \"url\": \"https://ads-doh.securedns.eu/dns-query\" }, { \"name\": \"dnswarden\", \"url\": \"https://doh.dnswarden.com/uncensored\" }]");
+  user_pref("network.trr.uri", "https://ads-doh.securedns.eu/dns-query");
+  user_pref("pdfjs.disabled", true);
+  user_pref("pdfjs.enabledCache.state", false);
+  user_pref("pdfjs.migrationVersion", 2);
+  user_pref("pdfjs.previousHandler.alwaysAskBeforeHandling", true);
+  user_pref("pdfjs.previousHandler.preferredAction", 4);
+  user_pref("permissions.manager.defaultsUrl", "");
+  user_pref("plugin.state.flash", 0);
+  user_pref("privacy.clearOnShutdown.cache", true);
+  user_pref("privacy.clearOnShutdown.cookies", true);
+  user_pref("privacy.clearOnShutdown.downloads", true); 
+  user_pref("privacy.clearOnShutdown.formdata", true); 
+  user_pref("privacy.clearOnShutdown.history", true); 
+  user_pref("privacy.clearOnShutdown.offlineApps", true); 
+  user_pref("privacy.clearOnShutdown.sessions", true); 
+  user_pref("privacy.clearOnShutdown.siteSettings", false);
+  user_pref("privacy.cpd.cache", true);
+  user_pref("privacy.cpd.cookies", true);
+  user_pref("privacy.cpd.formdata", true); 
+  user_pref("privacy.cpd.history", true); 
+  user_pref("privacy.cpd.offlineApps", true); 
+  user_pref("privacy.cpd.passwords", false); 
+  user_pref("privacy.cpd.sessions", true); 
+  user_pref("privacy.cpd.siteSettings", false); 
+  user_pref("privacy.donottrackheader.enabled", true);
+  user_pref("privacy.firstparty.isolate", true);
+  user_pref("privacy.resistFingerprinting", true);
+  user_pref("privacy.resistFingerprinting.block_mozAddonManager", true); 
+  user_pref("privacy.resistFingerprinting.letterboxing", true);
+  user_pref("privacy.sanitize.sanitizeOnShutdown", true);
+  user_pref("privacy.sanitize.timeSpan", 0);
+  user_pref("privacy.trackingprotection.cryptomining.enabled", true);
+  user_pref("privacy.trackingprotection.enabled", true);
+  user_pref("privacy.trackingprotection.fingerprinting.enabled", true);
+  user_pref("privacy.userContext.enabled", true);
+  user_pref("privacy.userContext.ui.enabled", true);
+  user_pref("security.OCSP.enabled", 1);
+  user_pref("security.OCSP.require", true);
+  user_pref("security.ask_for_password", 2);
+  user_pref("security.cert_pinning.enforcement_level", 2);
+  user_pref("security.csp.enable", true);
+  user_pref("security.dialog_enable_delay", 700);
+  user_pref("security.family_safety.mode", 0);
+  user_pref("security.insecure_connection_icon.enabled", true);
+  user_pref("security.insecure_connection_text.enabled", true);
+  user_pref("security.mixed_content.block_active_content", true);
+  user_pref("security.mixed_content.block_display_content", true);
+  user_pref("security.mixed_content.block_object_subrequest", true);
+  user_pref("security.password_lifetime", 5)
+  user_pref("security.pki.sha1_enforcement_level", 1);
+  user_pref("security.ssl.disable_session_identifiers", true);
+  user_pref("security.ssl.enable_ocsp_stapling", true);
+  user_pref("security.ssl.errorReporting.automatic", false);
+  user_pref("security.ssl.errorReporting.enabled", false);
+  user_pref("security.ssl.errorReporting.url", "");
+  user_pref("security.ssl.require_safe_negotiation", true);
+  user_pref("security.ssl.treat_unsafe_negotiation_as_broken", true);
+  user_pref("security.tls.enable_0rtt_data", false);
+  user_pref("signon.autofillForms", false);
+  user_pref("signon.formlessCapture.enabled", false);
+  user_pref("toolkit.coverage.endpoint.base", "");
+  user_pref("toolkit.coverage.opt-out", true);
+  user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
+  user_pref("toolkit.telemetry.archive.enabled", false);
+  user_pref("toolkit.telemetry.bhrPing.enabled", false);
+  user_pref("toolkit.telemetry.coverage.opt-out", true);
+  user_pref("toolkit.telemetry.enabled", false);
+  user_pref("toolkit.telemetry.firstShutdownPing.enabled", false);
+  user_pref("toolkit.telemetry.newProfilePing.enabled", false);
+  user_pref("toolkit.telemetry.server", "data:,");
+  user_pref("toolkit.telemetry.shutdownPingSender.enabled", false);
+  user_pref("toolkit.telemetry.unified", false);
+  user_pref("toolkit.telemetry.updatePing.enabled", false);
+  user_pref("toolkit.winRegisterApplicationRestart", false);
+  user_pref("webchannel.allowObject.urlWhitelist", "");
+  user_pref("webgl.disable-fail-if-major-performance-caveat", true);
+  user_pref("webgl.disabled", true);
+  user_pref("webgl.enable-webgl2", false);
+  user_pref("webgl.min_capability_mode", true);
+
+#+end_src
+
+* Tab colors
+
+#+begin_src css
+  .tab-background[selected="true"] {
+      background-color: red !important; /* this sets the color of the tab background */
+      background-image: none !important;
+      color:white !important;
+      font-weight:bold !important;
+  }
+
+  .tab-line[selected="true"] {
+      background-color : red; /* this sets the color of the line above the tab */
+  }
+
+#+end_src

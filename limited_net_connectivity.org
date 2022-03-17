@@ -1,0 +1,54 @@
+#+TITLE: Limited network connectivity
+
+This explains the configuration for virtual machines firewall rules.
+- Allow SSH/SCP communications
+- Allow interactions with the =rclip= server to exchange text over the network  
+
+* Firewall scripts
+
+** Firewall script contents
+
+#+begin_src sh
+  #!/bin/sh
+  iptables -P INPUT DROP
+  iptables -P OUTPUT DROP
+  iptables -A INPUT -i lo -j ACCEPT 
+  iptables -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT 
+  iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+  iptables -A OUTPUT -p tcp -m tcp --dport 10080 -j ACCEPT 
+  iptables -A OUTPUT -o lo -j ACCEPT 
+  iptables -A OUTPUT -p tcp --sport 10080 -m state --state ESTABLISHED -j ACCEPT
+  iptables -A INPUT -m state  --state ESTABLISHED,RELATED -j ACCEPT
+#+end_src
+
+** Firewall script location
+
+#+begin_src sh
+  chmod +x firewall_rules.sh
+  cp firewall_rules.sh /usr/local/bin
+#+end_src
+
+* Install the firewall systemd service
+
+** System service contents
+
+#+begin_src sh
+  [Unit]
+  Description=Allow only RCLIP and SSH
+
+  [Service]
+  Type=simple
+  ExecStart=/bin/sh /usr/local/bin/fw_rules.sh
+
+  [Install]
+  WantedBy=multi-user.target
+#+end_src
+
+** Systemd service file location
+
+#+begin_src sh
+  doas cp firewall_rules.service /etc/systemd/service/
+  doas chmod 644 firewall_rules.service
+  doas systemctl enable firewall_rules.service
+  doas systemctl start firewall_rules.service
+#+end_src

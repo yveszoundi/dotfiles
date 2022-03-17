@@ -2,3 +2,22 @@
 
 Few configuration files, some of them are only used on non-Linux systems (i.e. alacritty).
 
+* Compression
+
+[[./compression.org]]
+
+* Virtual machines
+
+[[./qemu.org]]
+
+* Graphics
+
+[[./graphics.org]]
+
+* Web Browsing
+
+[[./web_browsing.org]]
+
+* Networking
+
+[[./limited_net_connectivity.org]]
