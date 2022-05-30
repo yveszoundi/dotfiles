@@ -31,6 +31,23 @@ Couple of useful addons that you can install.
 | [[https://addons.mozilla.org/en-US/firefox/addon/webgl-fingerprint-defender/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search][WebGL Fingerprint Defender]]    | Defending against WebGL fingerprinting by reporting a fake value.                                               |
 |-------------------------------+-----------------------------------------------------------------------------------------------------------------|
 
+* Hosts
+
+#+begin_src sh
+  curl -o hosts https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn-social/hosts
+  sudo mv hosts /etc/
+  sudo tee -a /etc/hosts <<EOF
+  0.0.0.0 www.gearbest.com
+  0.0.0.0 waisheph.com
+  0.0.0.0 yonxatuor.com
+  0.0.0.0 yrimcvbsqfuhjf.com
+  0.0.0.0 jsc.mgid.com
+  0.0.0.0 dotchaudou.com
+  0.0.0.0 cdn.itskiddoan.club
+  0.0.0.0 googletagmanager.com
+  EOF
+#+end_src
+
 * User.js
 
 #+begin_src js

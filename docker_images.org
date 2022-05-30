@@ -1,0 +1,47 @@
+# Few Docker images
+
+* Rust CentOS 7
+
+#+begin_src dockerfile
+  FROM docker.io/centos:centos7
+
+  RUN yum -y install epel-release && yum -y install \
+    fuse-sshfs \
+    webkitgtk4-devel \
+    fuse-sshfs \
+    openssl-devel \
+    curl \
+    git \
+    wget \
+    squashfs-tools \
+    gcc \
+    gcc-c++ \
+    make \
+    file \
+    openssh-clients \
+    openssh dkms dkms-fuse && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    . $HOME/.cargo/env && \
+    cargo --help && echo $(rustc --version) && \
+    wget -c https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage && chmod a+x linuxdeploy*.AppImage && \
+    mv linuxdeploy*.AppImage /usr/bin/linuxdeploy
+
+  VOLUME /appdir
+  VOLUME /artifacts
+  VOLUME /src
+
+#+end_src
+
+* Rust Windows
+
+#+begin_src dockerfile
+  FROM docker.io/rust:latest
+
+  RUN apt update && apt upgrade -y
+  RUN apt install -y g++-mingw-w64-x86-64
+
+  RUN rustup target add x86_64-pc-windows-gnu
+  RUN rustup toolchain install stable-x86_64-pc-windows-gnu
+
+  VOLUME /src
+#+end_src
