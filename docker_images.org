@@ -2,6 +2,10 @@
 
 * Rust CentOS 7
 
+For Linux distributions and non-zero dependencies binaries (static linking), it's difficult to ship applications that run on most Distributions without running into library compatability issues (GLIBC versions).
+
+One mitigation approach is to build Linux applications on Centos 7.
+
 #+begin_src dockerfile
   FROM docker.io/centos:centos7
 
@@ -25,6 +29,8 @@
     cargo --help && echo $(rustc --version) && \
     wget -c https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage && chmod a+x linuxdeploy*.AppImage && \
     mv linuxdeploy*.AppImage /usr/bin/linuxdeploy
+
+  RUN ln -sf /usr/lib64/libfuse.so.2.9.2 /usr/lib/libfuse.so.2
 
   VOLUME /appdir
   VOLUME /artifacts
