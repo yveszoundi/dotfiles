@@ -22,6 +22,17 @@ Hardware acceleration is a must with QEMU, still even without that it's still mu
 | Mac OS            | =--accel hvf=                    |
 |-------------------+----------------------------------|
 
+* NetBSD with QEMU and IPV6
+
+When running NetBSD in QEMU, by default network operations are very Very VEry VERy VERY slow.
+
+For example, uprading packages via =pkgin= could potentially take days for no reason. This is easily solved by updating the =/etc/rc.conf= file, [[https://gitlab.com/qemu-project/qemu/-/issues/985][per recommendation in a QEMU issue comment]].
+
+#+begin_src conf
+  ip6addrctl=YES
+  ip6addrctl_policy="ipv4_prefer"
+#+end_src
+
 * Scripts
 
 ** Folder and Script Location Conventions
