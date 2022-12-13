@@ -1,0 +1,15 @@
+#+TITLE: Keycloak notes
+
+- https://github.com/Abdul2/keycloack/blob/master/keycloack/services/src/main/java/org/keycloak/authentication/authenticators/browser/AbstractUsernameFormAuthenticator.java
+- https://github.com/guaxinim/user-storage-rest-flow/blob/master/src/main/java/br/gov/dataprev/keycloak/authenticator/UsernamePasswordForm.java
+- https://www.keycloak.org/docs-api/9.0/javadocs/org/keycloak/authentication/authenticators/browser/UsernamePasswordForm.html
+- https://www.keycloak.org/docs-api/9.0/javadocs/org/keycloak/authentication/Authenticator.html
+- https://www.keycloak.org/docs-api/9.0/javadocs/constant-values.html#org.keycloak.representations.idm.CredentialRepresentation.PASSWORD
+- https://github.com/keycloak/keycloak/blob/9bb1299d896e1d607aa3713429f5020fab780518/services/src/main/java/org/keycloak/authentication/authenticators/browser/UsernamePasswordForm.java
+- https://www.keycloak.org/docs-api/9.0/javadocs/org/keycloak/authentication/authenticators/x509/ValidateX509CertificateUsername.html
+- https://www.keycloak.org/docs-api/11.0/javadocs/org/keycloak/forms/login/LoginFormsProvider.html
+- https://www.keycloak.org/docs-api/9.0/javadocs/org/keycloak/authentication/ConfigurableAuthenticatorFactory.html
+- https://github.com/Identicum/keycloak-custom-authenticator
+- https://github.com/Abdul2/keycloack/tree/master/keycloack/services/src/main/java/org/keycloak/authentication/authenticators/x509
+- https://github.com/Abdul2/keycloack/blob/6f5fa7d641b5d9cc124121238f7fb3c56acd9ec6/keycloack/services/src/main/java/org/keycloak/authentication/authenticators/x509/AbstractX509ClientCertificateAuthenticator.java#L44
+- https://www.janua.fr/keycloak-x509-certificate-authentication/
